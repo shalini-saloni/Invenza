@@ -53,6 +53,45 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+import requests
+class GoogleAuthRequest(BaseModel):
+    token: str
+
+@app.post("/api/auth/google", response_model=schemas.Token)
+def google_auth(request: GoogleAuthRequest, db: Session = Depends(get_db)):
+    user_info_url = "https://www.googleapis.com/oauth2/v3/userinfo"
+    response = requests.get(user_info_url, headers={"Authorization": f"Bearer {request.token}"})
+    
+    if response.status_code != 200:
+        raise HTTPException(status_code=400, detail="Invalid Google token")
+        
+    user_info = response.json()
+    email = user_info.get("email")
+    name = user_info.get("name")
+    
+    if not email:
+        raise HTTPException(status_code=400, detail="Google authentication failed")
+        
+    user = db.query(models.User).filter(models.User.email == email).first()
+    
+    if not user:
+        hashed_password = auth.get_password_hash("google_oauth_dummy_password_" + email)
+        user = models.User(
+            email=email,
+            full_name=name,
+            hashed_password=hashed_password,
+            profile_picture=user_info.get("picture")
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
 import analysis
 from fastapi import Query
 
