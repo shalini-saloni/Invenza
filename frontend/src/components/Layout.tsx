@@ -12,6 +12,7 @@ const Layout: React.FC = () => {
   const [userInitials, setUserInitials] = useState('U');
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -26,7 +27,7 @@ const Layout: React.FC = () => {
         if (res.ok) {
           const data = await res.json();
           if (data.full_name) {
-            setUserInitials(data.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase());
+            setUserInitials(data.full_name.trim().charAt(0).toUpperCase());
           } else {
             setUserInitials(data.email[0].toUpperCase());
           }
@@ -90,10 +91,14 @@ const Layout: React.FC = () => {
 
           <div className="profile-menu flex-center" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
             <div className="profile-avatar flex-center">
-              {profilePic ? (
-                <img src={profilePic} alt="Avatar" />
-              ) : (
+              {!profilePic || imgError ? (
                 userInitials
+              ) : (
+                <img 
+                  src={profilePic} 
+                  alt={userInitials} 
+                  onError={() => setImgError(true)}
+                />
               )}
             </div>
           </div>
