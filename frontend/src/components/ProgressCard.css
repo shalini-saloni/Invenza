@@ -1,0 +1,74 @@
+.progress-card {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-container {
+  display: flex;
+  height: 90px;
+  gap: 16px;
+  margin: var(--spacing-md) 0 var(--spacing-lg);
+}
+
+.progress-bar {
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: 4px solid transparent;
+}
+
+.progress-bar.automated {
+  border-color: var(--accent-green);
+  background: linear-gradient(180deg, rgba(190, 242, 100, 0.1) 0%, rgba(190, 242, 100, 0.05) 100%);
+}
+
+.progress-bar.manual {
+  border-color: var(--accent-orange);
+  background: linear-gradient(180deg, rgba(253, 186, 116, 0.1) 0%, rgba(253, 186, 116, 0.05) 100%);
+}
+
+.progress-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.progress-bar.automated .progress-value {
+  color: var(--accent-green);
+}
+
+.progress-bar.manual .progress-value {
+  color: var(--accent-orange);
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.automated-dot {
+  background-color: var(--accent-green);
+}
+
+.legend-dot.manual-dot {
+  background-color: var(--accent-orange);
+}
