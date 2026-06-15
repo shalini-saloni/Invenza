@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
 
   const fetchDashboard = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/dashboard', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/dashboard`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.status === 401) {

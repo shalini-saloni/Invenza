@@ -10,7 +10,7 @@ const Inventory: React.FC = () => {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/inventory', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/inventory`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.status === 401) {

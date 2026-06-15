@@ -16,7 +16,7 @@ const Profile: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const res = await fetch('http://localhost:8000/users/me', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/users/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.status === 401) {
@@ -28,7 +28,7 @@ const Profile: React.FC = () => {
         setUser(data);
       }
 
-      const statsRes = await fetch('http://localhost:8000/api/user-stats', {
+      const statsRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/user-stats`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (statsRes.ok) {
@@ -52,7 +52,7 @@ const Profile: React.FC = () => {
       formData.append('file', file);
 
       try {
-        const res = await fetch('http://localhost:8000/users/me/avatar', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/users/me/avatar`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
           body: formData
@@ -73,7 +73,7 @@ const Profile: React.FC = () => {
 
   const handleEditName = async () => {
     try {
-      const res = await fetch('http://localhost:8000/users/me', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/users/me`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -98,7 +98,7 @@ const Profile: React.FC = () => {
     ? user.full_name.trim().charAt(0).toUpperCase()
     : user.email[0].toUpperCase();
 
-  const profilePicUrl = user.profile_picture ? `http://localhost:8000${user.profile_picture}` : null;
+  const profilePicUrl = user.profile_picture ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${user.profile_picture}` : null;
 
   return (
     <div className="profile-page">

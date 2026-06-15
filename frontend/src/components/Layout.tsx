@@ -17,7 +17,7 @@ const Layout: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://localhost:8000/users/me', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/users/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.status === 401) {
@@ -32,7 +32,7 @@ const Layout: React.FC = () => {
             setUserInitials(data.email[0].toUpperCase());
           }
           if (data.profile_picture) {
-            setProfilePic(`http://localhost:8000${data.profile_picture}`);
+            setProfilePic(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${data.profile_picture}`);
           }
         }
       } catch (e) {

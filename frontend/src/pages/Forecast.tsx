@@ -12,7 +12,7 @@ const Forecast: React.FC = () => {
   useEffect(() => {
     const fetchSkus = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/skus', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/skus`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.status === 401) {
@@ -38,7 +38,7 @@ const Forecast: React.FC = () => {
     }
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/forecast?sku=${sku}&periods=6`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/forecast?sku=${sku}&periods=6`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.status === 401) {
