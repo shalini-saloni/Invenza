@@ -11,6 +11,7 @@ const Profile: React.FC = () => {
   const [uploadingAvatar, setUploadingAvatar] = React.useState(false);
   const [isEditingName, setIsEditingName] = React.useState(false);
   const [editName, setEditName] = React.useState("");
+  const [imgError, setImgError] = React.useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchData = async () => {
@@ -94,7 +95,7 @@ const Profile: React.FC = () => {
   if (!user || !stats) return <div className="dashboard"><p style={{ color: '#9ca3af' }}>Loading profile...</p></div>;
 
   const initials = user.full_name
-    ? user.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase()
+    ? user.full_name.trim().charAt(0).toUpperCase()
     : user.email[0].toUpperCase();
 
   const profilePicUrl = user.profile_picture ? `http://localhost:8000${user.profile_picture}` : null;
@@ -112,10 +113,15 @@ const Profile: React.FC = () => {
         {/* Left Column: Avatar & Summary */}
         <div className="bg-card profile-card">
           <div className="avatar-container" onClick={() => !uploadingAvatar && fileInputRef.current?.click()}>
-            {profilePicUrl ? (
-              <img src={profilePicUrl} alt="Profile" className="avatar-image" />
-            ) : (
+            {!profilePicUrl || imgError ? (
               initials
+            ) : (
+              <img 
+                src={profilePicUrl} 
+                alt={initials} 
+                className="avatar-image" 
+                onError={() => setImgError(true)}
+              />
             )}
             <div className="avatar-overlay">
               <Camera size={24} />
