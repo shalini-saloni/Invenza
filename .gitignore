@@ -1,0 +1,8 @@
+*.db
+.env
+__pycache__/
+venv/
+node_modules/
+dist/
+uploaded_files/
+chroma_db/
