@@ -21,10 +21,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [token]);
 
   const login = (newToken: string) => {
+    localStorage.removeItem('invenza_chat_history');
     setToken(newToken);
   };
 
   const logout = () => {
+    localStorage.removeItem('invenza_chat_history');
     setToken(null);
   };
 
