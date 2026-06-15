@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Calendar, Camera, FileText, Database, Package, Edit2, Check, X } from 'lucide-react';
+import { User, Mail, Calendar, Camera, FileText, Database, Edit2, Check, X } from 'lucide-react';
 import './Profile.css';
 import '../components/Dashboard.css';
 

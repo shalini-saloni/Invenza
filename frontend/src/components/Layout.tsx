@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { Moon, Sun, Bell, LogOut, Menu, X } from 'lucide-react';
+import { Bell, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import './Navbar.css';
 
 const Layout: React.FC = () => {
   const { logout, token } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [userInitials, setUserInitials] = useState('U');
   const [profilePic, setProfilePic] = useState<string | null>(null);

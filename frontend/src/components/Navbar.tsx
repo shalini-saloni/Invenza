@@ -1,5 +1,5 @@
 import React from 'react';
-import { Moon, Bell, Package2 } from 'lucide-react';
+import { Moon, Bell } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
