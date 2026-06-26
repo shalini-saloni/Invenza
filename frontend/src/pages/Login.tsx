@@ -27,11 +27,12 @@ const Login: React.FC = () => {
         login(data.access_token);
         navigate('/');
       } else {
-        alert('Login failed');
+        const error = await response.json().catch(() => null);
+        alert(`Login failed: ${error?.detail || response.statusText}`);
       }
     } catch (err) {
-      console.error(err);
-      alert('Error connecting to server');
+      console.error('Login error:', err);
+      alert('Error connecting to server. Please try again in a moment.');
     }
   };
 
