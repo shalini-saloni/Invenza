@@ -10,7 +10,7 @@ const Forecast: React.FC = () => {
   const { token, logout } = useAuth();
 
   useEffect(() => {
-    const fetchSkus = async () => {
+    const fetchSkus = async (retries = 3) => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/skus`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -26,6 +26,10 @@ const Forecast: React.FC = () => {
         }
       } catch (e) {
         console.error("Failed to fetch SKUs", e);
+        if (retries > 0) {
+          console.log(`Retrying... (${retries} attempts left)`);
+          setTimeout(() => fetchSkus(retries - 1), 3000);
+        }
       }
     };
     fetchSkus();
