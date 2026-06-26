@@ -1,6 +1,6 @@
 import os
 import shutil
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document
@@ -13,8 +13,10 @@ _embeddings = None
 def get_embeddings():
     global _embeddings
     if _embeddings is None:
-        # Use HuggingFace embeddings which is free, runs locally, and is cached globally in-memory
-        _embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        _embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-small",
+            openai_api_key=os.getenv("OPENAI_API_KEY")
+        )
     return _embeddings
 
 def build_user_knowledge_base(user_id: int, db: Session):
