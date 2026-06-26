@@ -14,7 +14,11 @@ app = FastAPI(title="Invenza API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # For dev purposes
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://invenza-alpha.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
