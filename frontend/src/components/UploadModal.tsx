@@ -101,6 +101,14 @@ const UploadModal: React.FC<UploadModalProps> = ({ onClose, onSuccess }) => {
           />
         </div>
 
+        <div style={{ marginTop: '16px', marginBottom: '16px', textAlign: 'left', background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '8px', border: '1px solid #3f3f46' }}>
+          <p style={{ color: '#bef264', margin: '0 0 6px 0', fontSize: '13px', fontWeight: 500 }}>Required CSV Format:</p>
+          <code style={{ color: '#9ca3af', fontSize: '11px', whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+            Date,SKU,Product Name,Sales Quantity,Revenue,Stock Remaining,Category<br/>
+            2023-01-01,LAP-13,Laptop Pro 15,10,10000,50,Electronics
+          </code>
+        </div>
+
         {error && <p className="error-msg">{error}</p>}
 
         <button 

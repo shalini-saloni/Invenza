@@ -59,9 +59,9 @@ const Inventory: React.FC = () => {
                 <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   <td style={{ padding: '12px', fontWeight: 500 }}>{row.sku}</td>
                   <td style={{ padding: '12px', color: '#9ca3af' }}>{row.product}</td>
-                  <td style={{ padding: '12px' }}>{row.avg_monthly_sales}</td>
-                  <td style={{ padding: '12px', color: '#bef264', fontWeight: 600 }}>{row.recommended_stock}</td>
-                  <td style={{ padding: '12px', color: '#fb923c', fontWeight: 600 }}>{row.reorder_point}</td>
+                  <td style={{ padding: '12px' }}>{row.avg_monthly_sales} units</td>
+                  <td style={{ padding: '12px', color: '#bef264', fontWeight: 600 }}>{row.recommended_stock} units</td>
+                  <td style={{ padding: '12px', color: '#fb923c', fontWeight: 600 }}>{row.reorder_point} units</td>
                   <td style={{ padding: '12px' }}>
                     <span style={{ 
                       background: row.status === 'Healthy' ? 'rgba(190, 242, 100, 0.2)' : 'rgba(239, 68, 68, 0.2)',
