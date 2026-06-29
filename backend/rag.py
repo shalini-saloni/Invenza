@@ -1,69 +1,37 @@
 import os
-import shutil
-from langchain_openai import OpenAIEmbeddings
 from langchain_groq import ChatGroq
-from langchain_community.vectorstores import Chroma
-from langchain_core.documents import Document
+from langchain_core.messages import HumanMessage
 from sqlalchemy.orm import Session
-import pandas as pd
+from sqlalchemy import func
 import models
 
-_embeddings = None
-
-def get_embeddings():
-    global _embeddings
-    if _embeddings is None:
-        _embeddings = OpenAIEmbeddings(
-            model="text-embedding-3-small",
-            openai_api_key=os.getenv("OPENAI_API_KEY")
-        )
-    return _embeddings
-
 def build_user_knowledge_base(user_id: int, db: Session):
-    upload_ids = [u.id for u in db.query(models.Upload).filter(models.Upload.user_id == user_id).all()]
-    if not upload_ids:
-        return False
-        
-    rows = db.query(models.DataRow).filter(models.DataRow.upload_id.in_(upload_ids)).all()
-    if not rows:
-        return False
-        
-    # Create simple text summaries per SKU
-    df = pd.DataFrame([{"sku": r.sku, "product_name": r.product_name, "quantity": r.sales_quantity, "revenue": r.revenue} for r in rows])
-    summary = df.groupby(['sku', 'product_name']).sum().reset_index()
-    
-    docs = []
-    for _, row in summary.iterrows():
-        text = f"Product {row['product_name']} (SKU: {row['sku']}) has total historical sales quantity of {row['quantity']} units and total revenue of ${row['revenue']}."
-        docs.append(Document(page_content=text, metadata={"sku": row['sku']}))
-        
-    try:
-        embeddings = get_embeddings()
-        persist_directory = f"./chroma_db/user_{user_id}"
-        
-        # Clear existing Chroma DB directory to avoid dimension mismatch (OpenAI vs HuggingFace)
-        if os.path.exists(persist_directory):
-            shutil.rmtree(persist_directory)
-            
-        vectordb = Chroma.from_documents(docs, embeddings, persist_directory=persist_directory)
-        if hasattr(vectordb, 'persist'):
-            vectordb.persist()
-        return True
-    except Exception as e:
-        print(f"RAG Knowledge Base Build Error: {e}")
-        return False
+    # No longer needed since we dynamically fetch context on query to save memory
+    # and avoid OpenAI API quota errors or ChromaDB OOM crashes.
+    return True
 
-def query_insights(user_id: int, query: str):
-    persist_directory = f"./chroma_db/user_{user_id}"
-    if not os.path.exists(persist_directory):
-        return {"answer": "No data has been processed for insights yet. Please upload data."}
-        
+def query_insights(user_id: int, query: str, db: Session):
     try:
-        embeddings = get_embeddings()
-        vectordb = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+        upload_ids = [u.id for u in db.query(models.Upload).filter(models.Upload.user_id == user_id).all()]
+        if not upload_ids:
+            return {"answer": "No data has been processed for insights yet. Please upload data.", "evidence": []}
+            
+        # Dynamically aggregate data for the LLM context
+        results = db.query(
+            models.DataRow.sku,
+            models.DataRow.product_name,
+            func.sum(models.DataRow.sales_quantity).label('quantity'),
+            func.sum(models.DataRow.revenue).label('revenue')
+        ).filter(models.DataRow.upload_id.in_(upload_ids)).group_by(models.DataRow.sku, models.DataRow.product_name).all()
         
-        docs = vectordb.similarity_search(query, k=5)
-        context = "\n".join([doc.page_content for doc in docs])
+        if not results:
+            return {"answer": "No data available in your uploads.", "evidence": []}
+            
+        context_lines = []
+        for r in results:
+            context_lines.append(f"Product {r.product_name or 'Unknown'} (SKU: {r.sku}) has total historical sales quantity of {r.quantity} units and total revenue of ${r.revenue}.")
+            
+        context = "\n".join(context_lines)
         
         # Initialize ChatGroq LLM
         llm = ChatGroq(
@@ -82,10 +50,9 @@ def query_insights(user_id: int, query: str):
             "Answer:"
         )
         
-        from langchain_core.messages import HumanMessage
         response = llm.invoke([HumanMessage(content=prompt)])
         
-        return {"answer": response.content, "evidence": [doc.page_content for doc in docs]}
+        return {"answer": response.content, "evidence": context_lines}
     except Exception as e:
         print(f"RAG Query Error: {e}")
         return {"answer": f"I'm currently unable to process your request due to an error: {str(e)}", "evidence": []}

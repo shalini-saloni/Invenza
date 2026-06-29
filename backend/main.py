@@ -171,13 +171,7 @@ class ChatRequest(BaseModel):
 @app.post("/api/chat")
 def get_insights(request: ChatRequest, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
     import rag
-    import os
-    persist_directory = f"./chroma_db/user_{current_user.id}"
-    if not os.path.exists(persist_directory):
-        # RAG index missing (server may have restarted before background build finished)
-        # Try to rebuild it now
-        rag.build_user_knowledge_base(current_user.id, db)
-    return rag.query_insights(current_user.id, request.query)
+    return rag.query_insights(current_user.id, request.query, db)
 
 @app.get("/api/skus")
 def get_skus(user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
