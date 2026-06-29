@@ -151,8 +151,8 @@ def upload_data(background_tasks: BackgroundTasks, file: UploadFile = File(...),
     if result["status"] == "success":
         db_upload.status = "cleaned"
         message = f"Successfully processed {result['rows_processed']} rows."
-        # RAG knowledge base will be built on-demand when user queries insights
-        # (building it here as a background task crashes Render's free tier due to memory)
+        import rag
+        rag.build_user_knowledge_base(current_user.id, db)
         db.commit()
     else:
         db_upload.status = "error"
