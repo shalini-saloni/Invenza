@@ -2,7 +2,7 @@ import pandas as pd
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 import models
-from statsmodels.tsa.holtwinters import SimpleExpSmoothing
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from datetime import timedelta
 
 def get_dashboard_stats(user_id: int, db: Session):
@@ -56,8 +56,8 @@ def generate_forecast(user_id: int, sku: str, periods: int, db: Session):
     df = df.groupby('date')['quantity'].sum().reset_index().sort_values('date')
     
     df.set_index('date', inplace=True)
-    # Simple Exponential Smoothing
-    model = SimpleExpSmoothing(df['quantity'], initialization_method="estimated").fit()
+    # Exponential Smoothing with trend
+    model = ExponentialSmoothing(df['quantity'], trend='add', seasonal=None, initialization_method="estimated").fit()
     forecast = model.forecast(periods)
     
     # Generate future dates (assuming monthly data for simplicity)
