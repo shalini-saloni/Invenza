@@ -87,6 +87,3 @@ Date,SKU,Product Name,Sales Quantity,Revenue,Stock Remaining,Category
 2023-01-01,LAP-13,Laptop Pro 15,10,10000,50,Electronics
 2023-01-02,MOU-01,Wireless Mouse,15,450,120,Electronics
 ```
-
-## License
-This project is licensed under the MIT License.
